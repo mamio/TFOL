@@ -14,15 +14,22 @@ namespace Breakout
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class Game1 : Microsoft.Xna.Framework.Game
+    public class Breakout : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        private Texture2D palette;
 
-        public Game1()
+        public const int WIN_HEIGHT = 480;
+        public const int WIN_WIDTH = 860;
+
+        public Breakout()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            graphics.PreferredBackBufferHeight = WIN_HEIGHT;
+            graphics.PreferredBackBufferWidth = WIN_WIDTH;
         }
 
         /// <summary>
@@ -48,6 +55,7 @@ namespace Breakout
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            palette = Content.Load<Texture2D>("palette");
         }
 
         /// <summary>
@@ -57,6 +65,7 @@ namespace Breakout
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
+            Content.Unload();
         }
 
         /// <summary>
@@ -82,9 +91,15 @@ namespace Breakout
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
+            
             // TODO: Add your drawing code here
+            spriteBatch.Begin();
 
+            // TODO: changer l'emplacement une fois que notre taille de fenêtre est décidé
+            spriteBatch.Draw(palette, new Vector2((WIN_WIDTH/2) - 50, WIN_HEIGHT-50), Color.White);
+
+            spriteBatch.End();
+            
             base.Draw(gameTime);
         }
     }
