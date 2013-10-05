@@ -16,12 +16,14 @@ namespace Breakout
     /// </summary>
     public class Breakout : Microsoft.Xna.Framework.Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-        private Texture2D palette;
-
         public const int WIN_HEIGHT = 480;
         public const int WIN_WIDTH = 860;
+
+        GraphicsDeviceManager graphics;
+        SpriteBatch spriteBatch;
+        Rectangle screenBound = new Rectangle( 0, 0, WIN_WIDTH, WIN_HEIGHT );
+
+        Palette palette;                
 
         public Breakout()
         {
@@ -54,8 +56,10 @@ namespace Breakout
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
-            palette = Content.Load<Texture2D>("palette");
+            Texture2D paletteSprite = Content.Load<Texture2D>("palette");
+            palette = new Palette(paletteSprite, screenBound);
+
+            
         }
 
         /// <summary>
@@ -96,7 +100,7 @@ namespace Breakout
             spriteBatch.Begin();
 
             // TODO: changer l'emplacement une fois que notre taille de fenêtre est décidé
-            spriteBatch.Draw(palette, new Vector2((WIN_WIDTH/2) - 50, WIN_HEIGHT-50), Color.White);
+            palette.Draw(spriteBatch);
 
             spriteBatch.End();
             
