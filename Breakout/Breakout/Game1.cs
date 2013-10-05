@@ -23,6 +23,7 @@ namespace Breakout
         SpriteBatch spriteBatch;
         Rectangle screenBound = new Rectangle( 0, 0, WIN_WIDTH, WIN_HEIGHT );
 
+        Texture2D brique;
         Palette palette;                
 
         public Breakout()
@@ -58,6 +59,8 @@ namespace Breakout
 
             Texture2D paletteSprite = Content.Load<Texture2D>("palette");
             palette = new Palette(paletteSprite, screenBound);
+
+            brique = Content.Load<Texture2D>("brique");
 
             
         }
@@ -101,6 +104,8 @@ namespace Breakout
 
             // TODO: changer l'emplacement une fois que notre taille de fenêtre est décidé
             palette.Draw(spriteBatch);
+
+            spriteBatch.Draw(brique, new Vector2(100, 100), Color.OrangeRed);
 
             spriteBatch.End();
             
