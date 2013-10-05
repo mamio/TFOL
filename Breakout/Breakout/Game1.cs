@@ -87,6 +87,9 @@ namespace Breakout
                 this.Exit();
 
             // TODO: Add your update logic here
+            KeyboardState state = Keyboard.GetState();
+
+            palette.Update(state);
 
             base.Update(gameTime);
         }
