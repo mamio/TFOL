@@ -20,22 +20,6 @@ namespace Breakout
         private int speedX;
         private Vector2 position;
 
-        public float xPos
-        {
-            get
-            {
-                return position.X;
-            }
-            set
-            {
-                if (value < 0)
-                    position.X = 0;
-                else if (value > screenBound.Width - sprite.Width)
-                    position.X = screenBound.Width - sprite.Width;
-                else
-                    position.X = value;
-            }
-        }
         public Palette(Texture2D sprite, Rectangle screenBound)
         {
             position = new Vector2();
@@ -55,11 +39,13 @@ namespace Breakout
         {
             if (state.IsKeyDown(Keys.Left))
             {
-                xPos -= speedX;
+                if ((position.X -= speedX) < 0)
+                    position.X = 0;
             }
             else if(state.IsKeyDown(Keys.Right))
             {
-                xPos += speedX;
+                if ((position.X += speedX) > screenBound.Width - sprite.Width)
+                    position.X = screenBound.Width - sprite.Width;
             }
         }
 
