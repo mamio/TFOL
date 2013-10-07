@@ -15,10 +15,10 @@ namespace Breakout
 {
     class Palette
     {
-        public Vector2 position;
         private Texture2D sprite;
         private Rectangle screenBound;
-        public int speedX;
+        private int speedX;
+        private Vector2 position;
 
         public Palette(Texture2D sprite, Rectangle screenBound)
         {
@@ -39,11 +39,13 @@ namespace Breakout
         {
             if (state.IsKeyDown(Keys.Left))
             {
-                position.X -= speedX;
+                if ((position.X -= speedX) < 0)
+                    position.X = 0;
             }
             else if(state.IsKeyDown(Keys.Right))
             {
-                position.X += speedX;
+                if ((position.X += speedX) > screenBound.Width - sprite.Width)
+                    position.X = screenBound.Width - sprite.Width;
             }
         }
 
