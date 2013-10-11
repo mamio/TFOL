@@ -20,9 +20,7 @@ Alexandre *Stongeeee* St-Onge ( **Git Master** )
 5. Développe sur ta branche  *[le temps passe]*
 5.1 Plus tu codes dans plusieurs fichier, plus sa risque d'être compliqué à faire le merge 
 6. Fait **souvent** des commits sur la branche avec des noms clairs et indicatifs
-7. Fetch upstream ($ git fetch upstream) 
-8. Met à jour **ton master** (<code>git checkout master; git merge upstream/master</code>)  
-8.1 Alternativement, on peux remplace 6 et 7 par (<code>$ git checkout master; git pull upstream</code>) *Phil me corrigera si je me trompe*  
+7. Met à jour **ton master**(<code>$ git checkout master; git pull upstream</code>) *Phil me corrigera si je me trompe*  
 9. Rebase ta branche (<code>$ git checkout ajout-nouvelle-brique; git rebase master)
 10. Répète les étapes 5 à 9 jusqu'à complétion de la tâche
 11. Push ta branche sur GitHub (<code>$ git push origin ajout-nouvelle-brique</code>)
