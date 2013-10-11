@@ -17,13 +17,13 @@ namespace Breakout
     public class Breakout : Microsoft.Xna.Framework.Game
     {
         public const int WIN_HEIGHT = 480;
-        public const int WIN_WIDTH = 860;
+        public const int WIN_WIDTH = 845;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Rectangle screenBound = new Rectangle( 0, 0, WIN_WIDTH, WIN_HEIGHT );
 
-        Texture2D brique;
+        List<Brique> briques;
         Palette palette;                
 
         public Breakout()
@@ -33,6 +33,8 @@ namespace Breakout
 
             graphics.PreferredBackBufferHeight = WIN_HEIGHT;
             graphics.PreferredBackBufferWidth = WIN_WIDTH;
+
+            briques = new List<Brique>();
         }
 
         /// <summary>
@@ -60,7 +62,9 @@ namespace Breakout
             Texture2D paletteSprite = Content.Load<Texture2D>("palette");
             palette = new Palette(paletteSprite, screenBound);
 
-            brique = Content.Load<Texture2D>("brique");
+            Texture2D briqueSprite = Content.Load<Texture2D>("brique");
+            for (int i = 0; i < screenBound.Width; i += briqueSprite.Width)
+                briques.Add(new Brique(briqueSprite, Color.Fuchsia, new Vector2(i, 100), 1));
 
             
         }
@@ -108,7 +112,8 @@ namespace Breakout
             // TODO: changer l'emplacement une fois que notre taille de fenêtre est décidé
             palette.Draw(spriteBatch);
 
-            spriteBatch.Draw(brique, new Vector2(100, 100), Color.OrangeRed);
+            foreach ( Brique brique in briques)
+                brique.Draw(spriteBatch) ;
 
             spriteBatch.End();
             
