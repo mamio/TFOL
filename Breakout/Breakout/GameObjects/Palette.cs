@@ -29,12 +29,13 @@ namespace Breakout
 
         public void Update(KeyboardState state)
         {
-            if (state.IsKeyDown(Keys.Left))
+
+            if (state.IsKeyDown(Keys.Left) || state.IsKeyDown(Keys.A))
             {
                 if ((position.X -= speedX) < 0)
                     position.X = 0;
             }
-            else if(state.IsKeyDown(Keys.Right))
+            else if (state.IsKeyDown(Keys.Right) || state.IsKeyDown(Keys.D))
             {
                 if ((position.X += speedX) > screenBound.Width - sprite.Width)
                     position.X = screenBound.Width - sprite.Width;
