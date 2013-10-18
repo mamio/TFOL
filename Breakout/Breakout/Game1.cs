@@ -24,7 +24,10 @@ namespace Breakout
         Rectangle screenBound = new Rectangle( 0, 0, WIN_WIDTH, WIN_HEIGHT );
 
         List<Brique> briques;
-        Palette palette;                
+        Palette palette;
+
+        KeyboardState lastKeyboardState;
+        int briquesBrisees = 0;
 
         public Breakout()
         {
@@ -93,7 +96,19 @@ namespace Breakout
             // TODO: Add your update logic here
             KeyboardState state = Keyboard.GetState();
 
+            if (state.IsKeyDown(Keys.RightControl) && lastKeyboardState != state)
+            {
+                if (briquesBrisees < briques.Count)
+                {
+                    briques[briquesBrisees] = null;
+                    ++briquesBrisees;
+                }
+            }
+
             palette.Update(state);
+
+            //Doit absolument etre apres tous les verifications du clavier
+            lastKeyboardState = state;
 
             base.Update(gameTime);
         }
@@ -112,8 +127,11 @@ namespace Breakout
             // TODO: changer l'emplacement une fois que notre taille de fenêtre est décidé
             palette.Draw(spriteBatch);
 
-            foreach ( Brique brique in briques)
-                brique.Draw(spriteBatch) ;
+            foreach (Brique brique in briques)
+            {
+                if (brique != null)
+                    brique.Draw(spriteBatch);
+            }
 
             spriteBatch.End();
             
