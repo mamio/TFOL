@@ -27,6 +27,12 @@ namespace Breakout
             position.Y = screenBound.Height - 50;
         }
 
+        public Rectangle getLocation()
+        {
+            return new Rectangle((int)position.X, (int)position.Y,
+                sprite.Width, sprite.Height);
+        }
+
         public void Update(KeyboardState state)
         {
 

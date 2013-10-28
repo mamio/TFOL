@@ -25,6 +25,7 @@ namespace Breakout
 
         List<Brique> briques;
         Palette palette;
+        Balle balle;
 
         KeyboardState lastKeyboardState;
         int briquesBrisees = 0;
@@ -69,7 +70,8 @@ namespace Breakout
             for (int i = 0; i < screenBound.Width; i += briqueSprite.Width)
                 briques.Add(new Brique(briqueSprite, Color.Fuchsia, new Vector2(i, 100), 1));
 
-            
+            Texture2D balleSprite = Content.Load<Texture2D>("balle");
+            balle = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 -10, screenBound.Height - 70));
         }
 
         /// <summary>
@@ -106,6 +108,8 @@ namespace Breakout
             }
 
             palette.Update(state);
+            balle.Update(state);
+            balle.checkPaddleCollision(palette.getLocation());
 
             //Doit absolument etre apres tous les verifications du clavier
             lastKeyboardState = state;
@@ -126,6 +130,7 @@ namespace Breakout
 
             // TODO: changer l'emplacement une fois que notre taille de fenêtre est décidé
             palette.Draw(spriteBatch);
+            balle.Draw(spriteBatch);
 
             foreach (Brique brique in briques)
             {
