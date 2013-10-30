@@ -38,12 +38,20 @@ namespace Breakout
             return position.X;
         }
 
+        public void setPositionX(float positionX)
+        {
+            position.X = positionX;
+        }
+
+        public bool getEnable()
+        {
+            return enable;
+        }
+
         public void setEnable(bool enableballe)
         {
             enable = enableballe;
         }
-
-
 
         public void Update(KeyboardState state)
         {

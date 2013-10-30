@@ -95,6 +95,10 @@ namespace Breakout
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
+            if (balle.getEnable() == false)
+            {
+                balle.setPositionX(palette.getPositionX() + 40);
+            }
 
             if (balle.getPositionY() > screenBound.Bottom)
             {
