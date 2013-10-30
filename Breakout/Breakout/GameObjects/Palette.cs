@@ -34,6 +34,16 @@ namespace Breakout
             position.Y = screenBound.Height - 50;
         }
 
+        public float getPositionX()
+        {
+            return position.X;
+        }
+
+        public float getPositionY()
+        {
+            return position.Y;
+        }
+
         public Rectangle getLocation()
         {
             return new Rectangle((int)position.X, (int)position.Y,
