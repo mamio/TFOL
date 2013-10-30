@@ -11,6 +11,7 @@ namespace Breakout
         private Rectangle screenBound;
         private int speedX;
         private Vector2 position;
+        KeyboardState lastKeyboardState;
 
         public Palette(Texture2D sprite, Rectangle screenBound)
         {
@@ -41,13 +42,12 @@ namespace Breakout
 
         public void Update(KeyboardState state)
         {
-
-            if (state.IsKeyDown(Keys.Left) || state.IsKeyDown(Keys.A))
+            if (state.IsKeyDown(Keys.Left) || state.IsKeyDown(Keys.A) )
             {
                 if ((position.X -= speedX) < 0)
                     position.X = 0;
             }
-            else if (state.IsKeyDown(Keys.Right) || state.IsKeyDown(Keys.D))
+            if (state.IsKeyDown(Keys.Right) || state.IsKeyDown(Keys.D))
             {
                 if ((position.X += speedX) > screenBound.Width - sprite.Width)
                     position.X = screenBound.Width - sprite.Width;
