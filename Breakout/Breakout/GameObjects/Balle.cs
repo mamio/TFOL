@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 using System;
 
@@ -65,6 +66,19 @@ namespace Breakout
 
             if (position.Y < 0)
                 speed.Y *= -1;
+        }
+
+        public bool checkBrickCollision(Rectangle brick)
+        {
+            Rectangle ballLocation = new Rectangle((int)position.X, (int)position.Y,
+               sprite.Width, sprite.Height);
+
+            if (brick.Intersects(ballLocation) && !inCollision)
+            {
+                speed.Y *= -1;
+                return true;
+            }
+            return false;
         }
 
         public void checkPaddleCollision(Rectangle paddle)

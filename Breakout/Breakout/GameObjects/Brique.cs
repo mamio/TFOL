@@ -28,6 +28,12 @@ namespace Breakout
             this.hp = hp;
         }
 
+        public Rectangle getLocation()
+        {
+            return new Rectangle((int)position.X, (int)position.Y,
+                sprite.Width, sprite.Height);
+        }
+
         public void Update()
         {
             // TODO: faire de quoi
