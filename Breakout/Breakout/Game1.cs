@@ -111,12 +111,12 @@ namespace Breakout
             // TODO: Add your update logic here
             KeyboardState state = Keyboard.GetState();
 
-            if (state.IsKeyDown(Keys.RightControl) && lastKeyboardState != state)
+            for (int i = 0; i < briques.Count; ++i)
             {
-                if (briquesBrisees < briques.Count)
+                if (balle.checkBrickCollision(briques[i].getLocation()))
                 {
-                    briques[briquesBrisees] = null;
-                    ++briquesBrisees;
+                    briques[i] = null;
+                    briques.Remove(briques[i]);
                 }
             }
 
