@@ -95,6 +95,15 @@ namespace Breakout
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
+
+            if (balle.getPositionY() > screenBound.Bottom)
+            {
+                Texture2D balleSprite = Content.Load<Texture2D>("balle");
+                balle = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 - 10, screenBound.Height - 70));
+                palette.returnToStart();
+                balle.setEnable(false);
+            }
+
             // TODO: Add your update logic here
             KeyboardState state = Keyboard.GetState();
 

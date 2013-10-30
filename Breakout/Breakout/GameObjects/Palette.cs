@@ -27,6 +27,12 @@ namespace Breakout
             position.Y = screenBound.Height - 50;
         }
 
+        public void returnToStart()
+        {
+            position.X = screenBound.Width / 2 - 50;
+            position.Y = screenBound.Height - 50;
+        }
+
         public Rectangle getLocation()
         {
             return new Rectangle((int)position.X, (int)position.Y,

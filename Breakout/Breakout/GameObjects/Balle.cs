@@ -28,6 +28,23 @@ namespace Breakout
             inCollision = false;
         }
 
+        public float getPositionY()
+        {
+            return position.Y;
+        }
+
+        public float getPositionX()
+        {
+            return position.X;
+        }
+
+        public void setEnable(bool enableballe)
+        {
+            enable = enableballe;
+        }
+
+
+
         public void Update(KeyboardState state)
         {
             if (!enable && state.IsKeyDown(Keys.Space))
