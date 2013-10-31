@@ -144,7 +144,7 @@ namespace Breakout
                 }
 
                 palette.Update(state);
-                balle.Update(state);
+                balle.Update(state, gameTime);
                 balle.checkPaddleCollision(palette.getLocation());
             }
             //Doit absolument etre apres tous les verifications du clavier
