@@ -15,7 +15,7 @@ namespace Breakout
 
         public BoutonStart(Texture2D sprite, Rectangle screenBound)
         {
-            this.startButton = sprite;
+            setSprite(sprite);
             this.screenBound = screenBound;
             setPosition();
         }
@@ -34,6 +34,10 @@ namespace Breakout
         public float getPositionY()
         {
             return startButtonPosition.Y;
+        }
+        public void setSprite(Texture2D sprite)
+        {
+            this.startButton = sprite;
         }
 
         public void Draw(SpriteBatch spriteBatch)
