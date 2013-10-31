@@ -108,6 +108,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameObjects\Balle.cs" />
+    <Compile Include="GameObjects\BoutonExit.cs" />
+    <Compile Include="GameObjects\BoutonStart.cs" />
     <Compile Include="GameObjects\Brique.cs" />
     <Compile Include="GameObjects\Palette.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

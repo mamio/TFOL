@@ -19,6 +19,12 @@ namespace Breakout
         public const int WIN_HEIGHT = 480;
         public const int WIN_WIDTH = 845;
 
+        enum GameState
+        {
+            StartMenu,
+            Playing
+        }
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Rectangle screenBound = new Rectangle( 0, 0, WIN_WIDTH, WIN_HEIGHT );
@@ -29,6 +35,13 @@ namespace Breakout
 
         KeyboardState lastKeyboardState;
         int briquesBrisees = 0;
+
+        BoutonStart boutonStart;
+        BoutonExit boutonExit;
+        private GameState gameState;
+
+        MouseState mouseState;
+        MouseState previousMouseState;
 
         public Breakout()
         {
@@ -50,6 +63,12 @@ namespace Breakout
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            IsMouseVisible = true;
+           
+            gameState = GameState.StartMenu;
+
+            mouseState = Mouse.GetState();
+            previousMouseState = mouseState;
 
             base.Initialize();
         }
@@ -72,6 +91,12 @@ namespace Breakout
 
             Texture2D balleSprite = Content.Load<Texture2D>("balle");
             balle = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 -10, screenBound.Height - 70));
+
+            Texture2D boutonStartSprite = Content.Load<Texture2D>("boutonStart");
+            boutonStart = new BoutonStart(boutonStartSprite, screenBound);
+
+            Texture2D boutonExitSprite = Content.Load<Texture2D>("boutonExit");
+            boutonExit = new BoutonExit(boutonExitSprite, screenBound);
         }
 
         /// <summary>
@@ -95,37 +120,44 @@ namespace Breakout
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            if (balle.getEnable() == false)
-            {
-                balle.setPositionX(palette.getPositionX() + 40);
-            }
-
-            if (balle.getPositionY() > screenBound.Bottom)
-            {
-                Texture2D balleSprite = Content.Load<Texture2D>("balle");
-                balle = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 - 10, screenBound.Height - 70));
-                palette.returnToStart();
-                balle.setEnable(false);
-            }
-
             // TODO: Add your update logic here
             KeyboardState state = Keyboard.GetState();
 
-            for (int i = 0; i < briques.Count; ++i)
+            if (gameState == GameState.Playing)
             {
-                if (balle.checkBrickCollision(briques[i].getLocation()))
+                if (balle.getEnable() == false)
                 {
-                    briques[i] = null;
-                    briques.Remove(briques[i]);
+                    balle.setPositionX(palette.getPositionX() + 40);
                 }
-            }
 
             palette.Update(state);
             balle.Update(state, gameTime);
             balle.checkPaddleCollision(palette.getLocation());
 
+                for (int i = 0; i < briques.Count; ++i)
+                {
+                    if (balle.checkBrickCollision(briques[i].getLocation()))
+                    {
+                        briques[i] = null;
+                        briques.Remove(briques[i]);
+                    }
+                }
+
+                palette.Update(state);
+                balle.Update(state, gameTime);
+                balle.checkPaddleCollision(palette.getLocation());
+            }
             //Doit absolument etre apres tous les verifications du clavier
             lastKeyboardState = state;
+
+            mouseState = Mouse.GetState();
+            if (previousMouseState.LeftButton == ButtonState.Pressed &&
+                mouseState.LeftButton == ButtonState.Released)
+            {
+                MouseClicked(mouseState.X, mouseState.Y);
+            }
+
+            previousMouseState = mouseState;
 
             base.Update(gameTime);
         }
@@ -141,19 +173,52 @@ namespace Breakout
             // TODO: Add your drawing code here
             spriteBatch.Begin();
 
-            // TODO: changer l'emplacement une fois que notre taille de fenêtre est décidé
-            palette.Draw(spriteBatch);
-            balle.Draw(spriteBatch);
-
-            foreach (Brique brique in briques)
+            if (gameState == GameState.StartMenu)
             {
-                if (brique != null)
-                    brique.Draw(spriteBatch);
+                boutonStart.Draw(spriteBatch);
+                boutonExit.Draw(spriteBatch);
+            }
+
+            if (gameState == GameState.Playing)
+            {
+                // TODO: changer l'emplacement une fois que notre taille de fenêtre est décidé
+                palette.Draw(spriteBatch);
+                balle.Draw(spriteBatch);
+
+                foreach (Brique brique in briques)
+                {
+                    if (brique != null)
+                        brique.Draw(spriteBatch);
+                }
             }
 
             spriteBatch.End();
             
             base.Draw(gameTime);
+        }
+
+        void MouseClicked(int x, int y)
+        {
+            //creates a rectangle of 10x10 around the place where the mouse was clicked
+            Rectangle mouseClickRect = new Rectangle(x, y, 20, 20);
+
+            //check the startmenu
+            if (gameState == GameState.StartMenu)
+            {
+                Rectangle startButtonRect = new Rectangle((int)boutonStart.getPositionX(), (int)boutonStart.getPositionY(), 145, 50);
+                Rectangle exitButtonRect = new Rectangle((int)boutonExit.getPositionX(), (int)boutonExit.getPositionY(), 145, 50);
+
+                if (mouseClickRect.Intersects(startButtonRect)) //player clicked start button
+                {
+                    gameState = GameState.Playing;
+                }
+
+                if (mouseClickRect.Intersects(exitButtonRect)) //player clicked exit button
+                {
+                    Exit();
+                }
+            }
+
         }
     }
 }
