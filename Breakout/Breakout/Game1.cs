@@ -128,6 +128,55 @@ namespace Breakout
             // TODO: Add your update logic here
             KeyboardState state = Keyboard.GetState();
 
+            if (gameState == GameState.StartMenu)
+            {
+
+                Texture2D boutonStartSprite = Content.Load<Texture2D>("boutonStart");
+                if ((mouseState.X < boutonStart.getPositionX() + boutonStartSprite.Width)
+                     && mouseState.X > boutonStart.getPositionX() &&
+                    mouseState.Y < (boutonStart.getPositionY() + boutonStartSprite.Height)
+                    && mouseState.Y > boutonStart.getPositionY())
+                {
+                    Texture2D boutonStartHighlightedSprite = Content.Load<Texture2D>("boutonStart_highlighted");
+                    boutonStart.setSprite(boutonStartHighlightedSprite);
+                }
+                else
+                {
+                    boutonStart.setSprite(boutonStartSprite);
+                }
+
+                Texture2D boutonExitSprite = Content.Load<Texture2D>("boutonExit");
+                if ((mouseState.X < boutonExit.getPositionX() + boutonExitSprite.Width)
+                     && mouseState.X > boutonExit.getPositionX() &&
+                    mouseState.Y < (boutonExit.getPositionY() + boutonExitSprite.Height)
+                    && mouseState.Y > boutonExit.getPositionY())
+                {
+                    Texture2D boutonExitHighlightedSprite = Content.Load<Texture2D>("boutonExit_highlighted");
+                    boutonExit.setSprite(boutonExitHighlightedSprite);
+                }
+                else
+                {
+                    boutonExit.setSprite(boutonExitSprite);
+                }
+            }
+
+            if (gameState == GameState.Paused)
+            {
+                Texture2D boutonResumeSprite = Content.Load<Texture2D>("boutonResume");
+                if ((mouseState.X < boutonResume.getPositionX() + boutonResumeSprite.Width)
+                     && mouseState.X > boutonResume.getPositionX() &&
+                    mouseState.Y < (boutonResume.getPositionY() + boutonResumeSprite.Height)
+                    && mouseState.Y > boutonResume.getPositionY())
+                {
+                    Texture2D boutonResumeHighlightedSprite = Content.Load<Texture2D>("boutonResume_highlighted");
+                    boutonResume.setSprite(boutonResumeHighlightedSprite);
+                }
+                else
+                {
+                    boutonResume.setSprite(boutonResumeSprite);
+                }
+            }
+
             if (gameState == GameState.Playing)
             {
                 if (balle.getEnable() == false)
@@ -233,11 +282,15 @@ namespace Breakout
 
                 if (mouseClickRect.Intersects(startButtonRect)) //player clicked start button
                 {
+                    Texture2D boutonStartActivatedSprite = Content.Load<Texture2D>("boutonStart_activated");
+                    boutonStart.setSprite(boutonStartActivatedSprite);
                     gameState = GameState.Playing;
                 }
 
                 if (mouseClickRect.Intersects(exitButtonRect)) //player clicked exit button
                 {
+                    Texture2D boutonExitActivatedSprite = Content.Load<Texture2D>("boutonExit_activated");
+                    boutonExit.setSprite(boutonExitActivatedSprite);
                     Exit();
                 }
             }
@@ -247,6 +300,8 @@ namespace Breakout
 
                 if (mouseClickRect.Intersects(resumeButtonRect)) //player clicked start button
                 {
+                    Texture2D boutonResumeActivatedSprite = Content.Load<Texture2D>("boutonResume_activated");
+                    boutonResume.setSprite(boutonResumeActivatedSprite);
                     gameState = GameState.Playing;
                 }
             }
