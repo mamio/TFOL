@@ -37,7 +37,7 @@ namespace Breakout
 
             graphics.PreferredBackBufferHeight = WIN_HEIGHT;
             graphics.PreferredBackBufferWidth = WIN_WIDTH;
-
+            
             briques = new List<Brique>();
         }
 
@@ -121,7 +121,7 @@ namespace Breakout
             }
 
             palette.Update(state);
-            balle.Update(state);
+            balle.Update(state, gameTime);
             balle.checkPaddleCollision(palette.getLocation());
 
             //Doit absolument etre apres tous les verifications du clavier
