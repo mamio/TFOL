@@ -22,7 +22,8 @@ namespace Breakout
         enum GameState
         {
             StartMenu,
-            Playing
+            Playing,
+            Paused
         }
 
         GraphicsDeviceManager graphics;
@@ -38,6 +39,7 @@ namespace Breakout
 
         BoutonStart boutonStart;
         BoutonExit boutonExit;
+        Resume boutonResume;
         private GameState gameState;
 
         MouseState mouseState;
@@ -97,6 +99,9 @@ namespace Breakout
 
             Texture2D boutonExitSprite = Content.Load<Texture2D>("boutonExit");
             boutonExit = new BoutonExit(boutonExitSprite, screenBound);
+
+            Texture2D boutonResumeSprite = Content.Load<Texture2D>("boutonResume");
+            boutonResume = new Resume(boutonResumeSprite, screenBound);
         }
 
         /// <summary>
@@ -128,11 +133,26 @@ namespace Breakout
                 if (balle.getEnable() == false)
                 {
                     balle.setPositionX(palette.getPositionX() + 40);
+
                 }
 
-            palette.Update(state);
-            balle.Update(state, gameTime);
-            balle.checkPaddleCollision(palette.getLocation());
+                if (balle.getPositionY() > screenBound.Bottom)
+                {
+                    Texture2D balleSprite = Content.Load<Texture2D>("balle");
+                    balle = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 - 10, screenBound.Height - 70));
+                    palette.returnToStart();
+                    balle.setEnable(false);
+                }
+
+
+                if (state.IsKeyDown(Keys.Enter))
+                {
+                    gameState = GameState.Paused;
+                }
+
+                palette.Update(state);
+                balle.Update(state, gameTime);
+                balle.checkPaddleCollision(palette.getLocation());
 
                 for (int i = 0; i < briques.Count; ++i)
                 {
@@ -143,10 +163,8 @@ namespace Breakout
                     }
                 }
 
-                palette.Update(state);
-                balle.Update(state, gameTime);
-                balle.checkPaddleCollision(palette.getLocation());
             }
+
             //Doit absolument etre apres tous les verifications du clavier
             lastKeyboardState = state;
 
@@ -177,6 +195,11 @@ namespace Breakout
             {
                 boutonStart.Draw(spriteBatch);
                 boutonExit.Draw(spriteBatch);
+            }
+
+            if (gameState == GameState.Paused)
+            {
+                boutonResume.Draw(spriteBatch);
             }
 
             if (gameState == GameState.Playing)
@@ -216,6 +239,15 @@ namespace Breakout
                 if (mouseClickRect.Intersects(exitButtonRect)) //player clicked exit button
                 {
                     Exit();
+                }
+            }
+            if (gameState == GameState.Paused)
+            {
+                Rectangle resumeButtonRect = new Rectangle((int)boutonResume.getPositionX(), (int)boutonResume.getPositionY(), 145, 50);
+
+                if (mouseClickRect.Intersects(resumeButtonRect)) //player clicked start button
+                {
+                    gameState = GameState.Playing;
                 }
             }
 

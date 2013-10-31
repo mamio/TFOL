@@ -112,6 +112,7 @@
     <Compile Include="GameObjects\BoutonStart.cs" />
     <Compile Include="GameObjects\Brique.cs" />
     <Compile Include="GameObjects\Palette.cs" />
+    <Compile Include="GameObjects\Resume.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
