@@ -24,7 +24,7 @@ namespace Breakout
 
         private void setInitPosition()
         {
-            position.X = screenBound.Width / 2 - 50;
+            position.X = screenBound.Width / 2 - (sprite.Width/2);
             position.Y = screenBound.Height - 50;
         }
 

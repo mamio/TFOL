@@ -92,7 +92,7 @@ namespace Breakout
                 briques.Add(new Brique(briqueSprite, Color.Fuchsia, new Vector2(i, 100), 1));
 
             Texture2D balleSprite = Content.Load<Texture2D>("balle");
-            balle = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 -10, screenBound.Height - 70));
+            balle = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 - (balleSprite.Width), screenBound.Height - 70));
 
             Texture2D boutonStartSprite = Content.Load<Texture2D>("boutonStart");
             boutonStart = new BoutonStart(boutonStartSprite, screenBound);
@@ -162,6 +162,11 @@ namespace Breakout
 
             if (gameState == GameState.Paused)
             {
+                if (state.IsKeyDown(Keys.Back))
+                {
+                    gameState = GameState.Playing;
+                }
+
                 Texture2D boutonResumeSprite = Content.Load<Texture2D>("boutonResume");
                 if ((mouseState.X < boutonResume.getPositionX() + boutonResumeSprite.Width)
                      && mouseState.X > boutonResume.getPositionX() &&
