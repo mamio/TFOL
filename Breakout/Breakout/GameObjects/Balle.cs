@@ -23,7 +23,7 @@ namespace Breakout
             this.position = position;
             this.sprite = sprite;
             this.screenBound = screenBound;
-            direction = new Vector2(1, -1);
+            direction = new Vector2(0, 1);
             speed = 150;
             enable = false;
             inCollision = false;
@@ -107,6 +107,11 @@ namespace Breakout
                     float paddleCenter = paddle.X + (paddle.Width/2);
                     float ballCenter = position.X + sprite.Width/2;
                     direction.X = (ballCenter - paddleCenter) / (paddle.Width / 2);
+                    if (ballCenter - paddleCenter == 0)
+                    {
+                        direction.X = 0;
+                    }
+                    System.Diagnostics.Debug.WriteLine(direction.X + " " + direction.Y);
 
                     direction = Vector2.Normalize(direction);
                 }
