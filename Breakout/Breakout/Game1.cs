@@ -47,6 +47,8 @@ namespace Breakout
         MouseState mouseState;
         MouseState previousMouseState;
 
+        int lives;
+
         public Breakout()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -91,7 +93,17 @@ namespace Breakout
 
             Texture2D briqueSprite = Content.Load<Texture2D>("brique");
             for (int i = 0; i < screenBound.Width; i += briqueSprite.Width)
+                briques.Add(new Brique(briqueSprite, Color.LimeGreen, new Vector2(i, 100 + briqueSprite.Height), 1));
+            for (int i = 0; i < screenBound.Width; i += briqueSprite.Width)
                 briques.Add(new Brique(briqueSprite, Color.Fuchsia, new Vector2(i, 100), 1));
+            for (int i = 0; i < screenBound.Width; i += briqueSprite.Width)
+                briques.Add(new Brique(briqueSprite, Color.Orange, new Vector2(i, 100 - briqueSprite.Height), 1));
+            for (int i = 0; i < screenBound.Width; i += briqueSprite.Width)
+                briques.Add(new Brique(briqueSprite, Color.DodgerBlue, new Vector2(i, 100 - 2*briqueSprite.Height), 2));
+            for (int i = 0; i < screenBound.Width; i += briqueSprite.Width)
+                briques.Add(new Brique(briqueSprite, Color.DarkOrchid, new Vector2(i, 100 - 3*briqueSprite.Height), 1));
+            for (int i = 0; i < screenBound.Width; i += briqueSprite.Width)
+                briques.Add(new Brique(briqueSprite, Color.DeepPink, new Vector2(i, 100 - 4*briqueSprite.Height), 1));
 
             Texture2D balleSprite = Content.Load<Texture2D>("balle");
             balle = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 - (balleSprite.Width), screenBound.Height - 70));
@@ -107,6 +119,8 @@ namespace Breakout
 
             Texture2D chiffre3Sprite = Content.Load<Texture2D>("3");
             chiffre = new WaitTime(chiffre3Sprite, screenBound);
+
+            lives = 3;
         }
 
         /// <summary>
@@ -228,6 +242,11 @@ namespace Breakout
 
                 if (balle.getPositionY() > screenBound.Bottom)
                 {
+                    lives -= 1;
+                    if (lives == 0)
+                    {
+                        LoadContent();
+                    }
                     Texture2D balleSprite = Content.Load<Texture2D>("balle");
                     balle = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 - 10, screenBound.Height - 70));
                     palette.returnToStart();
@@ -248,8 +267,20 @@ namespace Breakout
                 {
                     if (balle.checkBrickCollision(briques[i].getLocation()))
                     {
-                        briques[i] = null;
-                        briques.Remove(briques[i]);
+                        briques[i].setHp(briques[i].getHp() - 1);
+                        if (briques[i].getHp() == 0)
+                        {
+                            briques[i] = null;
+                            briques.Remove(briques[i]);
+                        }
+                        else
+                        {
+                            briques[i].setColor(Color.LightBlue);
+                        }
+                        if (briques.Count == 0)
+                        {
+                            LoadContent();
+                        }
                     }
                 }
 

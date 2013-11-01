@@ -34,6 +34,26 @@ namespace Breakout
                 sprite.Width, sprite.Height);
         }
 
+        public int getHp()
+        {
+            return hp;
+        }
+
+        public Color getColor()
+        {
+            return color;
+        }
+
+        public void setHp(int hp)
+        {
+            this.hp = hp;
+        }
+
+        public void setColor(Color color)
+        {
+            this.color = color;
+        }
+
         public void Update()
         {
             // TODO: faire de quoi
