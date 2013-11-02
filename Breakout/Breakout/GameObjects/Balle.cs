@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
 using System.Collections.Generic;
 
 using System;
@@ -55,7 +56,7 @@ namespace Breakout
             enable = enableballe;
         }
 
-        public void Update(KeyboardState state, GameTime gameTime)
+        public void Update(KeyboardState state, GameTime gameTime, SoundEffectInstance soundEngineInstance)
         {
             
             if (!enable && state.IsKeyDown(Keys.Space))
@@ -63,19 +64,34 @@ namespace Breakout
 
             if (enable) 
             {
-                checkWallCollision();
+                if (checkWallCollision())
+                {
+                    // La balle émet le son approprié
+                    soundEngineInstance.Volume = 0.75f;
+                    soundEngineInstance.Play();
+                }
                 position += direction * (float)(speed * gameTime.ElapsedGameTime.TotalSeconds);
             }
             
         }
 
-        private void checkWallCollision()
+        private bool checkWallCollision()
         {
-            if (position.X < 0 || (position.X+sprite.Width) > screenBound.Width)
+            bool hasCollided = false;
+
+            if (position.X < 0 || (position.X + sprite.Width) > screenBound.Width)
+            {
                 direction.X *= -1;
+                hasCollided = true;
+            }
 
             if (position.Y < 0)
+            {
                 direction.Y *= -1;
+                hasCollided = true;
+            }
+
+            return hasCollided;
         }
 
         public bool checkBrickCollision(Rectangle brick)
@@ -95,7 +111,7 @@ namespace Breakout
             return false;
         }
 
-        public void checkPaddleCollision(Rectangle paddle)
+        public void checkPaddleCollision(Rectangle paddle, SoundEffectInstance soundEngineInstance)
         {
             Rectangle ballLocation = new Rectangle((int)position.X, (int)position.Y,
                 sprite.Width, sprite.Height);
@@ -103,6 +119,11 @@ namespace Breakout
             if (paddle.Intersects(ballLocation) && !inCollision)
             {
                 inCollision = true;
+
+                // La balle émet le son approprié
+                soundEngineInstance.Volume = 0.75f;
+                soundEngineInstance.Play();
+
                 //Collision avec le top de la palette
                 if (ballLocation.Intersects(new Rectangle(paddle.X, paddle.Y, paddle.Width, 0)))
                 {
