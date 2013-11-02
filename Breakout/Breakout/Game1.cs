@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -48,6 +48,17 @@ namespace Breakout
         MouseState previousMouseState;
 
         int lives;
+
+        Song mainMenuMusic;
+        Song gameMusic;
+
+        SoundEffectInstance soundEngineInstance;
+        SoundEffect balleMur;
+        SoundEffect ballePalette;
+        SoundEffect explosionBrique;
+        SoundEffect death;
+        SoundEffect deathFinal;
+        SoundEffect countdown;
 
         public Breakout()
         {
@@ -121,6 +132,16 @@ namespace Breakout
             chiffre = new WaitTime(chiffre3Sprite, screenBound);
 
             lives = 3;
+
+            balleMur = Content.Load<SoundEffect>("HitWall");
+            ballePalette = Content.Load<SoundEffect>("HitPalette");
+            explosionBrique = Content.Load<SoundEffect>("Explosion");
+            death = Content.Load<SoundEffect>("Death");
+            deathFinal = Content.Load<SoundEffect>("DeathFinal");
+            countdown = Content.Load<SoundEffect>("321");
+
+            mainMenuMusic = Content.Load<Song>("mainMenuMusic");
+            gameMusic = Content.Load<Song>("gameMusic");
         }
 
         /// <summary>
@@ -149,9 +170,16 @@ namespace Breakout
 
             if (gameState == GameState.StartMenu)
             {
+                if (MediaPlayer.State == MediaState.Stopped)
+                {
+                    MediaPlayer.IsRepeating = true;
+                    MediaPlayer.Play(mainMenuMusic);
+                }
+
                 if (state.IsKeyDown(Keys.Enter))
                 {
-                    gameState = GameState.Loading;
+                    MediaPlayer.Stop();
+                    gameState = GameState.Loading;           
                 }
 
                 Texture2D boutonStartSprite = Content.Load<Texture2D>("boutonStart");
@@ -185,6 +213,13 @@ namespace Breakout
 
             if (gameState == GameState.Loading)
             {
+                if (soundEngineInstance == null || soundEngineInstance.State == SoundState.Stopped)
+                {
+                    soundEngineInstance = countdown.CreateInstance();
+                    soundEngineInstance.Volume = 0.75f;
+                    soundEngineInstance.Play();
+                }
+
                 Texture2D chiffre1Sprite = Content.Load<Texture2D>("1");
                 Texture2D chiffre2Sprite = Content.Load<Texture2D>("2");
                 Texture2D chiffre3Sprite = Content.Load<Texture2D>("3");
@@ -212,6 +247,8 @@ namespace Breakout
 
             if (gameState == GameState.Paused)
             {
+                MediaPlayer.Volume = 0.10f;
+
                 if (state.IsKeyDown(Keys.Back))
                 {
                     gameState = GameState.Loading;
@@ -234,12 +271,24 @@ namespace Breakout
 
             if (gameState == GameState.Playing)
             {
+                if (MediaPlayer.State == MediaState.Playing)
+                {
+                    MediaPlayer.Volume = 0.20f;
+                }
+                if (MediaPlayer.State == MediaState.Stopped)
+                {
+                    MediaPlayer.IsRepeating = true;
+                    MediaPlayer.Volume = 0.25f;
+                    MediaPlayer.Play(gameMusic);
+                }
+
                 if (balle.getEnable() == false)
                 {
                     balle.setPositionX(palette.getPositionX() + 40);
-
                 }
 
+                // Vérification si balle sort par le bas de l'écran
+                soundEngineInstance = death.CreateInstance();
                 if (balle.getPositionY() > screenBound.Bottom)
                 {
                     lives -= 1;
@@ -251,6 +300,9 @@ namespace Breakout
                     balle = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 - 10, screenBound.Height - 70));
                     palette.returnToStart();
                     balle.setEnable(false);
+
+                    soundEngineInstance.Volume = 0.50f;
+                    soundEngineInstance.Play();
                 }
 
 
@@ -259,10 +311,19 @@ namespace Breakout
                     gameState = GameState.Paused;
                 }
 
+                // Update la position de la palette
                 palette.Update(state);
-                balle.Update(state, gameTime);
-                balle.checkPaddleCollision(palette.getLocation());
 
+                // Update position de la balle + vérification collision avec mur
+                soundEngineInstance = balleMur.CreateInstance();
+                balle.Update(state, gameTime, soundEngineInstance);
+
+                // Vérification collision balle avec palette
+                soundEngineInstance = ballePalette.CreateInstance();
+                balle.checkPaddleCollision(palette.getLocation(), soundEngineInstance);
+
+                // Vérification collision balle avec briques
+                soundEngineInstance = explosionBrique.CreateInstance();
                 for (int i = 0; i < briques.Count; ++i)
                 {
                     if (balle.checkBrickCollision(briques[i].getLocation()))
@@ -272,6 +333,9 @@ namespace Breakout
                         {
                             briques[i] = null;
                             briques.Remove(briques[i]);
+
+                            soundEngineInstance.Volume = 0.50f;
+                            soundEngineInstance.Play();
                         }
                         else
                         {
@@ -330,7 +394,7 @@ namespace Breakout
 
             if (gameState == GameState.Playing)
             {
-                // TODO: changer l'emplacement une fois que notre taille de fen�tre est d�cid�
+                // TODO: changer l'emplacement une fois que notre taille de fenêtre est décidé
                 palette.Draw(spriteBatch);
                 balle.Draw(spriteBatch);
 
@@ -361,6 +425,7 @@ namespace Breakout
                 {
                     Texture2D boutonStartActivatedSprite = Content.Load<Texture2D>("boutonStart_activated");
                     boutonStart.setSprite(boutonStartActivatedSprite);
+                    MediaPlayer.Stop();
                     gameState = GameState.Loading;
                 }
 
