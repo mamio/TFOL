@@ -163,15 +163,16 @@ namespace Breakout
         protected override void Update(GameTime gameTime)
         {
             // TODO: Add your update logic here
-            KeyboardState state = Keyboard.GetState();
+            KeyboardState keyboardState = Keyboard.GetState();
+            mouseState = Mouse.GetState();
 
             // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || state.IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || keyboardState.IsKeyDown(Keys.Escape))
                 this.Exit();
 
             if (gameState == GameState.StartMenu)
             {
-                UpdateStartMenu(state);
+                UpdateStartMenu(keyboardState);
             }
 
             if (gameState == GameState.Loading)
@@ -181,22 +182,22 @@ namespace Breakout
 
             if (gameState == GameState.Paused)
             {
-                UpdatePause(state);
+                UpdatePause(keyboardState);
             }
 
             if (gameState == GameState.Playing)
             {
-                UpdatePlaying(gameTime, state);
+                UpdatePlaying(gameTime, keyboardState);
             }
             if (gameState == GameState.LevelEditor)
             {
-
+                UpdateLevelEditor(keyboardState, mouseState);
             }
 
             //Doit absolument etre apres tous les verifications du clavier
-            lastKeyboardState = state;
+            lastKeyboardState = keyboardState;
 
-            mouseState = Mouse.GetState();
+            
             if (previousMouseState.LeftButton == ButtonState.Pressed &&
                 mouseState.LeftButton == ButtonState.Released)
             {
@@ -206,6 +207,11 @@ namespace Breakout
             previousMouseState = mouseState;
 
             base.Update(gameTime);
+        }
+
+        private void UpdateLevelEditor(KeyboardState state, MouseState mouseState)
+        {
+            throw new NotImplementedException();
         }
 
         private void UpdatePlaying(GameTime gameTime, KeyboardState state)
