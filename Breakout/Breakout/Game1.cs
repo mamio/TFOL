@@ -24,7 +24,8 @@ namespace Breakout
             StartMenu,
             Playing,
             Paused,
-            Loading
+            Loading,
+            LevelEditor
         }
 
         GraphicsDeviceManager graphics;
@@ -170,7 +171,7 @@ namespace Breakout
 
             if (gameState == GameState.StartMenu)
             {
-                state = UpdateStartMenu(state);
+                UpdateStartMenu(state);
             }
 
             if (gameState == GameState.Loading)
@@ -180,12 +181,15 @@ namespace Breakout
 
             if (gameState == GameState.Paused)
             {
-                state = UpdatePause(state);
+                UpdatePause(state);
             }
 
             if (gameState == GameState.Playing)
             {
-                state = UpdatePlaying(gameTime, state);
+                UpdatePlaying(gameTime, state);
+            }
+            if (gameState == GameState.LevelEditor)
+            {
 
             }
 
@@ -204,7 +208,7 @@ namespace Breakout
             base.Update(gameTime);
         }
 
-        private KeyboardState UpdatePlaying(GameTime gameTime, KeyboardState state)
+        private void UpdatePlaying(GameTime gameTime, KeyboardState state)
         {
             if (MediaPlayer.State == MediaState.Playing)
             {
@@ -282,10 +286,9 @@ namespace Breakout
                     }
                 }
             }
-            return state;
         }
 
-        private KeyboardState UpdatePause(KeyboardState state)
+        private void UpdatePause(KeyboardState state)
         {
             MediaPlayer.Volume = 0.10f;
 
@@ -307,7 +310,6 @@ namespace Breakout
             {
                 boutonResume.setSprite(boutonResumeSprite);
             }
-            return state;
         }
 
         private void UpdateLoading(GameTime gameTime)
@@ -344,7 +346,7 @@ namespace Breakout
             }
         }
 
-        private KeyboardState UpdateStartMenu(KeyboardState state)
+        private void UpdateStartMenu(KeyboardState state)
         {
             if (MediaPlayer.State == MediaState.Stopped)
             {
@@ -385,7 +387,6 @@ namespace Breakout
             {
                 boutonExit.setSprite(boutonExitSprite);
             }
-            return state;
         }
 
         /// <summary>
