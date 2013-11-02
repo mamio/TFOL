@@ -170,183 +170,22 @@ namespace Breakout
 
             if (gameState == GameState.StartMenu)
             {
-                if (MediaPlayer.State == MediaState.Stopped)
-                {
-                    MediaPlayer.IsRepeating = true;
-                    MediaPlayer.Play(mainMenuMusic);
-                }
-
-                if (state.IsKeyDown(Keys.Enter))
-                {
-                    MediaPlayer.Stop();
-                    gameState = GameState.Loading;           
-                }
-
-                Texture2D boutonStartSprite = Content.Load<Texture2D>("boutonStart");
-                if ((mouseState.X < boutonStart.getPositionX() + boutonStartSprite.Width)
-                     && mouseState.X > boutonStart.getPositionX() &&
-                    mouseState.Y < (boutonStart.getPositionY() + boutonStartSprite.Height)
-                    && mouseState.Y > boutonStart.getPositionY())
-                {
-                    Texture2D boutonStartHighlightedSprite = Content.Load<Texture2D>("boutonStart_highlighted");
-                    boutonStart.setSprite(boutonStartHighlightedSprite);
-                }
-                else
-                {
-                    boutonStart.setSprite(boutonStartSprite);
-                }
-
-                Texture2D boutonExitSprite = Content.Load<Texture2D>("boutonExit");
-                if ((mouseState.X < boutonExit.getPositionX() + boutonExitSprite.Width)
-                     && mouseState.X > boutonExit.getPositionX() &&
-                    mouseState.Y < (boutonExit.getPositionY() + boutonExitSprite.Height)
-                    && mouseState.Y > boutonExit.getPositionY())
-                {
-                    Texture2D boutonExitHighlightedSprite = Content.Load<Texture2D>("boutonExit_highlighted");
-                    boutonExit.setSprite(boutonExitHighlightedSprite);
-                }
-                else
-                {
-                    boutonExit.setSprite(boutonExitSprite);
-                }
+                state = UpdateStartMenu(state);
             }
 
             if (gameState == GameState.Loading)
             {
-                if (soundEngineInstance == null || soundEngineInstance.State == SoundState.Stopped)
-                {
-                    soundEngineInstance = countdown.CreateInstance();
-                    soundEngineInstance.Volume = 0.75f;
-                    soundEngineInstance.Play();
-                }
-
-                Texture2D chiffre1Sprite = Content.Load<Texture2D>("1");
-                Texture2D chiffre2Sprite = Content.Load<Texture2D>("2");
-                Texture2D chiffre3Sprite = Content.Load<Texture2D>("3");
-                loadingTime -= (float)gameTime.ElapsedGameTime.TotalSeconds;
-                if (loadingTime <= 0)
-                {
-                    if (chiffre.getSprite() == chiffre3Sprite)
-                    {
-                        chiffre.setSprite(chiffre2Sprite);
-                        loadingTime = 1;
-                    }
-                    else if (chiffre.getSprite() == chiffre2Sprite)
-                    {
-                        chiffre.setSprite(chiffre1Sprite);
-                        loadingTime = 1;
-                    }
-                    else if (chiffre.getSprite() == chiffre1Sprite)
-                    {
-                        gameState = GameState.Playing;
-                        loadingTime = 1;
-                        chiffre.setSprite(chiffre3Sprite);
-                    }
-                }
+                UpdateLoading(gameTime);
             }
 
             if (gameState == GameState.Paused)
             {
-                MediaPlayer.Volume = 0.10f;
-
-                if (state.IsKeyDown(Keys.Back))
-                {
-                    gameState = GameState.Loading;
-                }
-
-                Texture2D boutonResumeSprite = Content.Load<Texture2D>("boutonResume");
-                if ((mouseState.X < boutonResume.getPositionX() + boutonResumeSprite.Width)
-                     && mouseState.X > boutonResume.getPositionX() &&
-                    mouseState.Y < (boutonResume.getPositionY() + boutonResumeSprite.Height)
-                    && mouseState.Y > boutonResume.getPositionY())
-                {
-                    Texture2D boutonResumeHighlightedSprite = Content.Load<Texture2D>("boutonResume_highlighted");
-                    boutonResume.setSprite(boutonResumeHighlightedSprite);
-                }
-                else
-                {
-                    boutonResume.setSprite(boutonResumeSprite);
-                }
+                state = UpdatePause(state);
             }
 
             if (gameState == GameState.Playing)
             {
-                if (MediaPlayer.State == MediaState.Playing)
-                {
-                    MediaPlayer.Volume = 0.20f;
-                }
-                if (MediaPlayer.State == MediaState.Stopped)
-                {
-                    MediaPlayer.IsRepeating = true;
-                    MediaPlayer.Volume = 0.25f;
-                    MediaPlayer.Play(gameMusic);
-                }
-
-                if (balle.getEnable() == false)
-                {
-                    balle.setPositionX(palette.getPositionX() + 40);
-                }
-
-                // Vérification si balle sort par le bas de l'écran
-                soundEngineInstance = death.CreateInstance();
-                if (balle.getPositionY() > screenBound.Bottom)
-                {
-                    lives -= 1;
-                    if (lives == 0)
-                    {
-                        LoadContent();
-                    }
-                    Texture2D balleSprite = Content.Load<Texture2D>("balle");
-                    balle = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 - 10, screenBound.Height - 70));
-                    palette.returnToStart();
-                    balle.setEnable(false);
-
-                    soundEngineInstance.Volume = 0.50f;
-                    soundEngineInstance.Play();
-                }
-
-
-                if (state.IsKeyDown(Keys.Enter))
-                {
-                    gameState = GameState.Paused;
-                }
-
-                // Update la position de la palette
-                palette.Update(state);
-
-                // Update position de la balle + vérification collision avec mur
-                soundEngineInstance = balleMur.CreateInstance();
-                balle.Update(state, gameTime, soundEngineInstance);
-
-                // Vérification collision balle avec palette
-                soundEngineInstance = ballePalette.CreateInstance();
-                balle.checkPaddleCollision(palette.getLocation(), soundEngineInstance);
-
-                // Vérification collision balle avec briques
-                soundEngineInstance = explosionBrique.CreateInstance();
-                for (int i = 0; i < briques.Count; ++i)
-                {
-                    if (balle.checkBrickCollision(briques[i].getLocation()))
-                    {
-                        briques[i].setHp(briques[i].getHp() - 1);
-                        if (briques[i].getHp() == 0)
-                        {
-                            briques[i] = null;
-                            briques.Remove(briques[i]);
-
-                            soundEngineInstance.Volume = 0.50f;
-                            soundEngineInstance.Play();
-                        }
-                        else
-                        {
-                            briques[i].setColor(Color.LightBlue);
-                        }
-                        if (briques.Count == 0)
-                        {
-                            LoadContent();
-                        }
-                    }
-                }
+                state = UpdatePlaying(gameTime, state);
 
             }
 
@@ -363,6 +202,190 @@ namespace Breakout
             previousMouseState = mouseState;
 
             base.Update(gameTime);
+        }
+
+        private KeyboardState UpdatePlaying(GameTime gameTime, KeyboardState state)
+        {
+            if (MediaPlayer.State == MediaState.Playing)
+            {
+                MediaPlayer.Volume = 0.20f;
+            }
+            if (MediaPlayer.State == MediaState.Stopped)
+            {
+                MediaPlayer.IsRepeating = true;
+                MediaPlayer.Volume = 0.25f;
+                MediaPlayer.Play(gameMusic);
+            }
+
+            if (balle.getEnable() == false)
+            {
+                balle.setPositionX(palette.getPositionX() + 40);
+            }
+
+            // Vérification si balle sort par le bas de l'écran
+            soundEngineInstance = death.CreateInstance();
+            if (balle.getPositionY() > screenBound.Bottom)
+            {
+                lives -= 1;
+                if (lives == 0)
+                {
+                    LoadContent();
+                }
+                Texture2D balleSprite = Content.Load<Texture2D>("balle");
+                balle = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 - 10, screenBound.Height - 70));
+                palette.returnToStart();
+                balle.setEnable(false);
+
+                soundEngineInstance.Volume = 0.50f;
+                soundEngineInstance.Play();
+            }
+
+
+            if (state.IsKeyDown(Keys.Enter))
+            {
+                gameState = GameState.Paused;
+            }
+
+            // Update la position de la palette
+            palette.Update(state);
+
+            // Update position de la balle + vérification collision avec mur
+            soundEngineInstance = balleMur.CreateInstance();
+            balle.Update(state, gameTime, soundEngineInstance);
+
+            // Vérification collision balle avec palette
+            soundEngineInstance = ballePalette.CreateInstance();
+            balle.checkPaddleCollision(palette.getLocation(), soundEngineInstance);
+
+            // Vérification collision balle avec briques
+            soundEngineInstance = explosionBrique.CreateInstance();
+            for (int i = 0; i < briques.Count; ++i)
+            {
+                if (balle.checkBrickCollision(briques[i].getLocation()))
+                {
+                    briques[i].setHp(briques[i].getHp() - 1);
+                    if (briques[i].getHp() == 0)
+                    {
+                        briques[i] = null;
+                        briques.Remove(briques[i]);
+
+                        soundEngineInstance.Volume = 0.50f;
+                        soundEngineInstance.Play();
+                    }
+                    else
+                    {
+                        briques[i].setColor(Color.LightBlue);
+                    }
+                    if (briques.Count == 0)
+                    {
+                        LoadContent();
+                    }
+                }
+            }
+            return state;
+        }
+
+        private KeyboardState UpdatePause(KeyboardState state)
+        {
+            MediaPlayer.Volume = 0.10f;
+
+            if (state.IsKeyDown(Keys.Back))
+            {
+                gameState = GameState.Loading;
+            }
+
+            Texture2D boutonResumeSprite = Content.Load<Texture2D>("boutonResume");
+            if ((mouseState.X < boutonResume.getPositionX() + boutonResumeSprite.Width)
+                 && mouseState.X > boutonResume.getPositionX() &&
+                mouseState.Y < (boutonResume.getPositionY() + boutonResumeSprite.Height)
+                && mouseState.Y > boutonResume.getPositionY())
+            {
+                Texture2D boutonResumeHighlightedSprite = Content.Load<Texture2D>("boutonResume_highlighted");
+                boutonResume.setSprite(boutonResumeHighlightedSprite);
+            }
+            else
+            {
+                boutonResume.setSprite(boutonResumeSprite);
+            }
+            return state;
+        }
+
+        private void UpdateLoading(GameTime gameTime)
+        {
+            if (soundEngineInstance == null || soundEngineInstance.State == SoundState.Stopped)
+            {
+                soundEngineInstance = countdown.CreateInstance();
+                soundEngineInstance.Volume = 0.75f;
+                soundEngineInstance.Play();
+            }
+
+            Texture2D chiffre1Sprite = Content.Load<Texture2D>("1");
+            Texture2D chiffre2Sprite = Content.Load<Texture2D>("2");
+            Texture2D chiffre3Sprite = Content.Load<Texture2D>("3");
+            loadingTime -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (loadingTime <= 0)
+            {
+                if (chiffre.getSprite() == chiffre3Sprite)
+                {
+                    chiffre.setSprite(chiffre2Sprite);
+                    loadingTime = 1;
+                }
+                else if (chiffre.getSprite() == chiffre2Sprite)
+                {
+                    chiffre.setSprite(chiffre1Sprite);
+                    loadingTime = 1;
+                }
+                else if (chiffre.getSprite() == chiffre1Sprite)
+                {
+                    gameState = GameState.Playing;
+                    loadingTime = 1;
+                    chiffre.setSprite(chiffre3Sprite);
+                }
+            }
+        }
+
+        private KeyboardState UpdateStartMenu(KeyboardState state)
+        {
+            if (MediaPlayer.State == MediaState.Stopped)
+            {
+                MediaPlayer.IsRepeating = true;
+                MediaPlayer.Play(mainMenuMusic);
+            }
+
+            if (state.IsKeyDown(Keys.Enter))
+            {
+                MediaPlayer.Stop();
+                gameState = GameState.Loading;
+            }
+
+            Texture2D boutonStartSprite = Content.Load<Texture2D>("boutonStart");
+            if ((mouseState.X < boutonStart.getPositionX() + boutonStartSprite.Width)
+                 && mouseState.X > boutonStart.getPositionX() &&
+                mouseState.Y < (boutonStart.getPositionY() + boutonStartSprite.Height)
+                && mouseState.Y > boutonStart.getPositionY())
+            {
+                Texture2D boutonStartHighlightedSprite = Content.Load<Texture2D>("boutonStart_highlighted");
+                boutonStart.setSprite(boutonStartHighlightedSprite);
+            }
+            else
+            {
+                boutonStart.setSprite(boutonStartSprite);
+            }
+
+            Texture2D boutonExitSprite = Content.Load<Texture2D>("boutonExit");
+            if ((mouseState.X < boutonExit.getPositionX() + boutonExitSprite.Width)
+                 && mouseState.X > boutonExit.getPositionX() &&
+                mouseState.Y < (boutonExit.getPositionY() + boutonExitSprite.Height)
+                && mouseState.Y > boutonExit.getPositionY())
+            {
+                Texture2D boutonExitHighlightedSprite = Content.Load<Texture2D>("boutonExit_highlighted");
+                boutonExit.setSprite(boutonExitHighlightedSprite);
+            }
+            else
+            {
+                boutonExit.setSprite(boutonExitSprite);
+            }
+            return state;
         }
 
         /// <summary>
