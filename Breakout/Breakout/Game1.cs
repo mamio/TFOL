@@ -43,6 +43,7 @@ namespace Breakout
         Bouton boutonStart;
         Bouton boutonExit;
         Bouton boutonResume;
+        Bouton boutonLevelEditor;
         WaitTime chiffre;
         float loadingTime = 1;
         bool pressed = false;
@@ -127,13 +128,19 @@ namespace Breakout
             balle = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 - (balleSprite.Width), screenBound.Height - 70));
 
             Texture2D boutonStartSprite = Content.Load<Texture2D>("boutonStart");
-            boutonStart = new Bouton(boutonStartSprite, screenBound, (screenBound.Width / 4) - (boutonStartSprite.Width / 2), screenBound.Height - 100);
-
+            Texture2D boutonStartHighlighted = Content.Load<Texture2D>("boutonStart_highlighted");
+            Texture2D boutonStartActivated = Content.Load<Texture2D>("boutonStart_activated");
+            boutonStart = new Bouton(boutonStartSprite, boutonStartHighlighted, boutonStartActivated, (screenBound.Width / 4) - (boutonStartSprite.Width / 2), screenBound.Height - 100);
+            boutonStart.Clicked += (s, e) => gameState = GameState.Loading;
             Texture2D boutonExitSprite = Content.Load<Texture2D>("boutonExit");
-            boutonExit = new Bouton(boutonExitSprite, screenBound, 3*(screenBound.Width / 4) - (boutonStartSprite.Width / 2), screenBound.Height - 100);
+            Texture2D boutonExitHigh = Content.Load<Texture2D>("boutonExit_highlighted");
+            Texture2D boutonExitAct = Content.Load<Texture2D>("boutonExit_Activated");
+            boutonExit = new Bouton(boutonExitSprite, boutonExitHigh, boutonExitAct, 3*(screenBound.Width / 4) - (boutonStartSprite.Width / 2), screenBound.Height - 100);
             
             Texture2D boutonResumeSprite = Content.Load<Texture2D>("boutonResume");
-            boutonResume = new Bouton(boutonResumeSprite, screenBound, screenBound.Width/2 - boutonResumeSprite.Width/2, screenBound.Height/2 - boutonResumeSprite.Height/2);
+            Texture2D boutonResumeHigh = Content.Load<Texture2D>("boutonResume_Highlighted");
+            Texture2D boutonResumeAct = Content.Load<Texture2D>("boutonResume_Activated");
+            boutonResume = new Bouton(boutonResumeSprite, boutonResumeHigh, boutonResumeAct, screenBound.Width/2 - boutonResumeSprite.Width/2, screenBound.Height/2 - boutonResumeSprite.Height/2);
 
             Texture2D chiffre3Sprite = Content.Load<Texture2D>("3");
             chiffre = new WaitTime(chiffre3Sprite, screenBound);
@@ -179,7 +186,7 @@ namespace Breakout
             if (gameState == GameState.StartMenu)
             {
 
-                UpdateStartMenu(keyboardState);
+                UpdateStartMenu(keyboardState, mouseState);
             }
 
             if (gameState == GameState.Loading)
@@ -189,7 +196,7 @@ namespace Breakout
 
             if (gameState == GameState.Paused)
             {
-                UpdatePause(keyboardState);
+                UpdatePause(keyboardState, mouseState);
             }
 
             if (gameState == GameState.Playing)
@@ -208,7 +215,7 @@ namespace Breakout
             if (previousMouseState.LeftButton == ButtonState.Pressed &&
                 mouseState.LeftButton == ButtonState.Released)
             {
-                MouseClicked(mouseState.X, mouseState.Y);
+               // MouseClicked(mouseState.X, mouseState.Y);
             }
 
             previousMouseState = mouseState;
@@ -301,24 +308,13 @@ namespace Breakout
             }
         }
 
-        private void UpdatePause(KeyboardState state)
+        private void UpdatePause(KeyboardState kState, MouseState mState)
         {
             MediaPlayer.Volume = 0.10f;
 
-                Texture2D boutonResumeSprite = Content.Load<Texture2D>("boutonResume");
-            if ((mouseState.X < boutonResume.getPositionX() + boutonResumeSprite.Width)
-                 && mouseState.X > boutonResume.getPositionX() &&
-                mouseState.Y < (boutonResume.getPositionY() + boutonResumeSprite.Height)
-                && mouseState.Y > boutonResume.getPositionY())
-            {
-                Texture2D boutonResumeHighlightedSprite = Content.Load<Texture2D>("boutonResume_highlighted");
-                boutonResume.setSprite(boutonResumeHighlightedSprite);
-            }
-            else
-            {
-                boutonResume.setSprite(boutonResumeSprite);
-            }
-            if (state.IsKeyDown(Keys.Back))
+            boutonResume.Update(kState, mState);
+
+            if (kState.IsKeyDown(Keys.Back))
             {
                 gameState = GameState.Loading;
             }
@@ -358,7 +354,7 @@ namespace Breakout
             }
         }
 
-        private void UpdateStartMenu(KeyboardState state)
+        private void UpdateStartMenu(KeyboardState kState, MouseState mState)
         {
             if (MediaPlayer.State == MediaState.Stopped)
             {
@@ -366,39 +362,15 @@ namespace Breakout
                 MediaPlayer.Play(mainMenuMusic);
             }
 
-            if (state.IsKeyDown(Keys.Enter))
+            if (kState.IsKeyDown(Keys.Enter))
             {
                 MediaPlayer.Stop();
                 gameState = GameState.Loading;
             }
 
-            Texture2D boutonStartSprite = Content.Load<Texture2D>("boutonStart");
-            if ((mouseState.X < boutonStart.getPositionX() + boutonStartSprite.Width)
-                 && mouseState.X > boutonStart.getPositionX() &&
-                mouseState.Y < (boutonStart.getPositionY() + boutonStartSprite.Height)
-                && mouseState.Y > boutonStart.getPositionY())
-            {
-                Texture2D boutonStartHighlightedSprite = Content.Load<Texture2D>("boutonStart_highlighted");
-                boutonStart.setSprite(boutonStartHighlightedSprite);
-            }
-            else
-            {
-                boutonStart.setSprite(boutonStartSprite);
-            }
+            boutonExit.Update(kState, mState);
+            boutonStart.Update(kState, mState);
 
-            Texture2D boutonExitSprite = Content.Load<Texture2D>("boutonExit");
-            if ((mouseState.X < boutonExit.getPositionX() + boutonExitSprite.Width)
-                 && mouseState.X > boutonExit.getPositionX() &&
-                mouseState.Y < (boutonExit.getPositionY() + boutonExitSprite.Height)
-                && mouseState.Y > boutonExit.getPositionY())
-            {
-                Texture2D boutonExitHighlightedSprite = Content.Load<Texture2D>("boutonExit_highlighted");
-                boutonExit.setSprite(boutonExitHighlightedSprite);
-            }
-            else
-            {
-                boutonExit.setSprite(boutonExitSprite);
-            }
         }
 
         /// <summary>
@@ -457,6 +429,7 @@ namespace Breakout
             base.Draw(gameTime);
         }
 
+        /*
         void MouseClicked(int x, int y)
         {
             //creates a rectangle of 10x10 around the place where the mouse was clicked
@@ -495,6 +468,6 @@ namespace Breakout
                 }
             }
 
-        }
+        }*/
     }
 }
