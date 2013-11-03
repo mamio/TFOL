@@ -136,12 +136,12 @@ namespace Breakout
             Texture2D boutonExitHigh = Content.Load<Texture2D>("boutonExit_highlighted");
             Texture2D boutonExitAct = Content.Load<Texture2D>("boutonExit_Activated");
             boutonExit = new Bouton(boutonExitSprite, boutonExitHigh, boutonExitAct, 3*(screenBound.Width / 4) - (boutonStartSprite.Width / 2), screenBound.Height - 100);
-            
+            boutonExit.Clicked += (s, e) => Exit();
             Texture2D boutonResumeSprite = Content.Load<Texture2D>("boutonResume");
             Texture2D boutonResumeHigh = Content.Load<Texture2D>("boutonResume_Highlighted");
             Texture2D boutonResumeAct = Content.Load<Texture2D>("boutonResume_Activated");
             boutonResume = new Bouton(boutonResumeSprite, boutonResumeHigh, boutonResumeAct, screenBound.Width/2 - boutonResumeSprite.Width/2, screenBound.Height/2 - boutonResumeSprite.Height/2);
-
+            boutonResume.Clicked += (s, e) => gameState = GameState.Loading;
             Texture2D chiffre3Sprite = Content.Load<Texture2D>("3");
             chiffre = new WaitTime(chiffre3Sprite, screenBound);
 
