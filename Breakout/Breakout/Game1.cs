@@ -32,17 +32,20 @@ namespace Breakout
         SpriteBatch spriteBatch;
         Rectangle screenBound = new Rectangle( 0, 0, WIN_WIDTH, WIN_HEIGHT );
 
+        Texture2D backgroundPlay;
+        Texture2D backgroundMenu;
         List<Brique> briques;
         Palette palette;
         Balle balle;
 
         KeyboardState lastKeyboardState;
 
-        BoutonStart boutonStart;
-        BoutonExit boutonExit;
-        Resume boutonResume;
+        Bouton boutonStart;
+        Bouton boutonExit;
+        Bouton boutonResume;
         WaitTime chiffre;
         float loadingTime = 1;
+        bool pressed = false;
         private GameState gameState;
 
         MouseState mouseState;
@@ -100,6 +103,9 @@ namespace Breakout
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            backgroundPlay = Content.Load<Texture2D>("background_play");
+            backgroundMenu = Content.Load<Texture2D>("background_menu");
+
             Texture2D paletteSprite = Content.Load<Texture2D>("palette");
             palette = new Palette(paletteSprite, screenBound);
 
@@ -121,13 +127,13 @@ namespace Breakout
             balle = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 - (balleSprite.Width), screenBound.Height - 70));
 
             Texture2D boutonStartSprite = Content.Load<Texture2D>("boutonStart");
-            boutonStart = new BoutonStart(boutonStartSprite, screenBound);
+            boutonStart = new Bouton(boutonStartSprite, screenBound, (screenBound.Width / 4) - (boutonStartSprite.Width / 2), screenBound.Height - 100);
 
             Texture2D boutonExitSprite = Content.Load<Texture2D>("boutonExit");
-            boutonExit = new BoutonExit(boutonExitSprite, screenBound);
-
+            boutonExit = new Bouton(boutonExitSprite, screenBound, 3*(screenBound.Width / 4) - (boutonStartSprite.Width / 2), screenBound.Height - 100);
+            
             Texture2D boutonResumeSprite = Content.Load<Texture2D>("boutonResume");
-            boutonResume = new Resume(boutonResumeSprite, screenBound);
+            boutonResume = new Bouton(boutonResumeSprite, screenBound, screenBound.Width/2 - boutonResumeSprite.Width/2, screenBound.Height/2 - boutonResumeSprite.Height/2);
 
             Texture2D chiffre3Sprite = Content.Load<Texture2D>("3");
             chiffre = new WaitTime(chiffre3Sprite, screenBound);
@@ -172,6 +178,7 @@ namespace Breakout
 
             if (gameState == GameState.StartMenu)
             {
+
                 UpdateStartMenu(keyboardState);
             }
 
@@ -298,12 +305,7 @@ namespace Breakout
         {
             MediaPlayer.Volume = 0.10f;
 
-            if (state.IsKeyDown(Keys.Back))
-            {
-                gameState = GameState.Loading;
-            }
-
-            Texture2D boutonResumeSprite = Content.Load<Texture2D>("boutonResume");
+                Texture2D boutonResumeSprite = Content.Load<Texture2D>("boutonResume");
             if ((mouseState.X < boutonResume.getPositionX() + boutonResumeSprite.Width)
                  && mouseState.X > boutonResume.getPositionX() &&
                 mouseState.Y < (boutonResume.getPositionY() + boutonResumeSprite.Height)
@@ -315,6 +317,10 @@ namespace Breakout
             else
             {
                 boutonResume.setSprite(boutonResumeSprite);
+            }
+            if (state.IsKeyDown(Keys.Back))
+            {
+                gameState = GameState.Loading;
             }
         }
 
@@ -405,9 +411,13 @@ namespace Breakout
             
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-
             if (gameState == GameState.StartMenu)
             {
+                spriteBatch.Draw(backgroundMenu,
+                 new Rectangle(0, 0, screenBound.Width,
+                 screenBound.Height), null,
+                 Color.White, 0, Vector2.Zero,
+                 SpriteEffects.None, 0);
                 boutonStart.Draw(spriteBatch);
                 boutonExit.Draw(spriteBatch);
             }
@@ -424,6 +434,13 @@ namespace Breakout
 
             if (gameState == GameState.Playing)
             {
+                // TODO: changer l'emplacement une fois que notre taille de fen�tre est d�cid�
+                spriteBatch.Draw(backgroundPlay,
+                 new Rectangle(0, 0, screenBound.Width,
+                 screenBound.Height), null,
+                 Color.White, 0, Vector2.Zero,
+                 SpriteEffects.None, 0);
+
                 // TODO: changer l'emplacement une fois que notre taille de fenêtre est décidé
                 palette.Draw(spriteBatch);
                 balle.Draw(spriteBatch);

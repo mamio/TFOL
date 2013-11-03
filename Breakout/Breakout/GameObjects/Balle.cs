@@ -15,6 +15,7 @@ namespace Breakout
         private Rectangle screenBound;
         private Vector2 direction;
         private float speed;
+        private float maxSpeed = 400;
         private Vector2 position;
         private bool enable;
         private bool inCollision;
@@ -101,6 +102,10 @@ namespace Breakout
             if (brick.Intersects(ballLocation) && !inCollision)
             {
                 direction.Y *= -1;
+                if (speed < maxSpeed)
+                {
+                    speed += 5;
+                }
                 return true;
             }
             return false;
@@ -128,12 +133,6 @@ namespace Breakout
                     float paddleCenter = paddle.X + (paddle.Width/2);
                     float ballCenter = position.X + sprite.Width/2;
                     direction.X = (ballCenter - paddleCenter) / (paddle.Width / 2);
-                    if (ballCenter - paddleCenter == 0)
-                    {
-                        direction.X = 0;
-                    }
-                    System.Diagnostics.Debug.WriteLine(direction.X + " " + direction.Y);
-
                     direction = Vector2.Normalize(direction);
                 }
 

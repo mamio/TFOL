@@ -39,10 +39,9 @@ namespace Breakout
         {
             return chiffre;
         }
-
         public void setSprite(Texture2D sprite)
         {
-            this.chiffre = sprite;
+            chiffre = sprite;
         }
         public void Draw(SpriteBatch spriteBatch)
         {
