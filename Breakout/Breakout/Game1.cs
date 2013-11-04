@@ -37,6 +37,7 @@ namespace Breakout
         List<Brique> briques;
         Palette palette;
         Balle balle;
+        Balle balleAnim;
 
         KeyboardState lastKeyboardState;
 
@@ -144,6 +145,9 @@ namespace Breakout
             boutonResume.Clicked += (s, e) => gameState = GameState.Loading;
             Texture2D chiffre3Sprite = Content.Load<Texture2D>("3");
             chiffre = new WaitTime(chiffre3Sprite, screenBound);
+
+            Texture2D balleAnimSprite = Content.Load<Texture2D>("balle");
+            balleAnim = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 - (balleSprite.Width), screenBound.Height - 70));
 
             lives = 3;
 
@@ -267,6 +271,7 @@ namespace Breakout
 
             if (state.IsKeyDown(Keys.Enter))
             {
+                pressed = true;
                 gameState = GameState.Paused;
             }
 
@@ -365,6 +370,7 @@ namespace Breakout
             if (kState.IsKeyDown(Keys.Enter))
             {
                 MediaPlayer.Stop();
+                pressed = true;
                 gameState = GameState.Loading;
             }
 
@@ -392,6 +398,8 @@ namespace Breakout
                  SpriteEffects.None, 0);
                 boutonStart.Draw(spriteBatch);
                 boutonExit.Draw(spriteBatch);
+
+                balleAnim.Draw(spriteBatch);
             }
 
             if (gameState == GameState.Loading)
