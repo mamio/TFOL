@@ -15,7 +15,7 @@ Alexandre *Stongeeee* St-Onge ( **Git Master** )
 
 1. Fork sur GitHub
 2. Clone **ton repo** sur ton ordi (<code>$ git clone git@github.com:<i>tonUsername</i>/TFOL.git</code>)
-3. Ajoute **ce repo** comme remote upstream (<code>$ git remote add upstream git://github.com/Alex1602/TFOL.git</code>)
+3. Ajoute **ce repo** comme remote upstream (<code>$ git remote add upstream git://github.com/Alex0216/TFOL.git</code>)
 4. Crée une branche pour la feature sur laquelle tu veux travailler (<code>$ git checkout -b ajout-nouvelle-brique</code>)
 5. Développe sur ta branche  *[le temps passe]*
 5.1 Plus tu codes dans plusieurs fichier, plus sa risque d'être compliqué à faire le merge 

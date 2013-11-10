@@ -319,7 +319,13 @@ namespace Breakout
 
             boutonResume.Update(kState, mState);
 
+<<<<<<< HEAD
             if (kState.IsKeyDown(Keys.Back))
+=======
+            boutonResume.Update(kState, mState);
+
+            if (kState.IsKeyDown(Keys.Back))
+>>>>>>> 4e7e561ef4340da34ec13a29b9388ad124ec9d75
             {
                 gameState = GameState.Loading;
             }
