@@ -110,6 +110,7 @@
     <Compile Include="GameObjects\Balle.cs" />
     <Compile Include="GameObjects\Bouton.cs" />
     <Compile Include="GameObjects\Brique.cs" />
+    <Compile Include="GameObjects\Heart.cs" />
     <Compile Include="GameObjects\Palette.cs" />
     <Compile Include="GameObjects\WaitTime.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

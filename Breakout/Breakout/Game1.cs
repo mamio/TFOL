@@ -37,6 +37,8 @@ namespace Breakout
         List<Brique> briques;
         Palette palette;
         Balle balle;
+        List<Heart> hearts;
+        int lives;
 
         KeyboardState lastKeyboardState;
 
@@ -51,8 +53,6 @@ namespace Breakout
 
         MouseState mouseState;
         MouseState previousMouseState;
-
-        int lives;
 
         Song mainMenuMusic;
         Song gameMusic;
@@ -74,6 +74,7 @@ namespace Breakout
             graphics.PreferredBackBufferWidth = WIN_WIDTH;
             
             briques = new List<Brique>();
+            hearts = new List<Heart>();
         }
 
         /// <summary>
@@ -146,6 +147,9 @@ namespace Breakout
             chiffre = new WaitTime(chiffre3Sprite, screenBound);
 
             lives = 3;
+            Texture2D heartSprite = Content.Load<Texture2D>("heart");
+            for (int i = 0; i < lives * (heartSprite.Width + 5); i += heartSprite.Width + 5)
+                hearts.Add(new Heart(heartSprite, new Vector2(i + 5, screenBound.Height - 30)));
 
             balleMur = Content.Load<SoundEffect>("HitWall");
             ballePalette = Content.Load<SoundEffect>("HitPalette");
@@ -251,6 +255,8 @@ namespace Breakout
             if (balle.getPositionY() > screenBound.Bottom)
             {
                 lives -= 1;
+                hearts[lives] = null;
+                hearts.Remove(hearts[lives]);
                 if (lives == 0)
                 {
                     LoadContent();
@@ -421,6 +427,12 @@ namespace Breakout
                 {
                     if (brique != null)
                         brique.Draw(spriteBatch);
+                }
+
+                foreach (Heart heart in hearts)
+                {
+                    if (heart != null)
+                        heart.Draw(spriteBatch);
                 }
             }
 
