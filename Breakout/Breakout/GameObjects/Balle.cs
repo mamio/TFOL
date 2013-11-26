@@ -19,16 +19,18 @@ namespace Breakout
         private Vector2 position;
         private bool enable;
         private bool inCollision;
+        private bool invincible;
 
-        public Balle(Texture2D sprite, Rectangle screenBound, Vector2 position)
+        public Balle(Texture2D sprite, Rectangle screenBound, Vector2 position, Vector2 directions, bool balleInvincible)
         {
             this.position = position;
             this.sprite = sprite;
             this.screenBound = screenBound;
-            direction = new Vector2(0, 1);
+            direction = Vector2.Normalize(directions);
             speed = 150;
             enable = false;
             inCollision = false;
+            invincible = balleInvincible;
         }
 
         public float getPositionY()
@@ -54,6 +56,16 @@ namespace Breakout
         public void setEnable(bool enableballe)
         {
             enable = enableballe;
+        }
+
+        public Vector2 setInitDirection(Vector2 initDirection)
+        {
+            return initDirection;
+        }
+
+        public bool setInvincible(bool invincibleBall)
+        {
+            return invincibleBall;
         }
 
         public void Update(KeyboardState state, GameTime gameTime, SoundEffectInstance soundEngineInstance)
@@ -86,6 +98,12 @@ namespace Breakout
             }
 
             if (position.Y < 0)
+            {
+                direction.Y *= -1;
+                hasCollided = true;
+            }
+
+            if (position.Y + sprite.Height >= screenBound.Height && invincible == true)
             {
                 direction.Y *= -1;
                 hasCollided = true;
