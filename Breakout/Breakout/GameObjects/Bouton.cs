@@ -52,6 +52,12 @@ namespace Breakout
             return boutonPosition.Y;
         }
 
+        public Rectangle getLocation()
+        {
+            return new Rectangle((int)boutonPosition.X, (int)boutonPosition.Y,
+                bound.Width, bound.Height);
+        }
+
         public void Update(KeyboardState kState, MouseState mState)
         {
             if (bound.Contains(mState.X, mState.Y))
@@ -65,6 +71,52 @@ namespace Breakout
             }
             else
                 etatPresent = Etat.Normal;
+        }
+
+        public void checkBallCollision(Balle ball)
+        {
+            bool inCollision = false;
+            Rectangle up = new Rectangle((int)boutonPosition.X, (int)boutonPosition.Y,
+                bound.Width, 0);
+            Rectangle down = new Rectangle((int)boutonPosition.X, (int)boutonPosition.Y + bound.Height,
+                bound.Width, 0);
+            Rectangle left = new Rectangle((int)boutonPosition.X, (int)boutonPosition.Y,
+                0, bound.Height);
+            Rectangle right = new Rectangle((int)boutonPosition.X + bound.Width, (int)boutonPosition.Y,
+                0, bound.Height);
+            if (ball.getLocation().Intersects(up) && !inCollision)
+            {
+                if (ball.getDirection().Y > 0)
+                    ball.setDirection(new Vector2(ball.getDirection().X, -1 * (ball.getDirection().Y)));
+                else
+                    ball.setDirection(new Vector2(-1 * ball.getDirection().X, ball.getDirection().Y + 1));
+                inCollision = true;
+            }
+            else if (ball.getLocation().Intersects(down) && !inCollision)
+            {
+                if (ball.getDirection().Y < 0)
+                    ball.setDirection(new Vector2(ball.getDirection().X, -1 * (ball.getDirection().Y)));
+                else
+                    ball.setDirection(new Vector2(-1 * ball.getDirection().X, ball.getDirection().Y + 1));
+                inCollision = true;
+            }
+            else if (ball.getLocation().Intersects(left) && !inCollision)
+            {
+                if (ball.getDirection().X > 0)
+                    ball.setDirection(new Vector2((-1 * ball.getDirection().X), ball.getDirection().Y));
+                else
+                    ball.setDirection(new Vector2(ball.getDirection().X + 1, -1 * ball.getDirection().Y));
+                inCollision = true;
+            }
+            else if (ball.getLocation().Intersects(right) && !inCollision)
+            {
+                if(ball.getDirection().X < 0)
+                    ball.setDirection(new Vector2((-1 * ball.getDirection().X), ball.getDirection().Y));
+                else
+                    ball.setDirection(new Vector2(ball.getDirection().X + 1, -1 * ball.getDirection().Y));
+                inCollision = true;
+
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
