@@ -37,6 +37,9 @@ namespace Breakout
         List<Brique> briques;
         Palette palette;
         Balle balle;
+        Balle balleAnim;
+        Balle balleAnim2;
+        Random r = new Random();
         List<Heart> hearts;
         int lives;
 
@@ -126,7 +129,7 @@ namespace Breakout
                 briques.Add(new Brique(briqueSprite, Color.DeepPink, new Vector2(i, 100 - 4*briqueSprite.Height), 1));
 
             Texture2D balleSprite = Content.Load<Texture2D>("balle");
-            balle = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 - (balleSprite.Width), screenBound.Height - 70));
+            balle = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 - (balleSprite.Width), screenBound.Height - 70), new Vector2(0,1), false);
 
             Texture2D boutonStartSprite = Content.Load<Texture2D>("boutonStart");
             Texture2D boutonStartHighlighted = Content.Load<Texture2D>("boutonStart_highlighted");
@@ -146,6 +149,8 @@ namespace Breakout
             Texture2D chiffre3Sprite = Content.Load<Texture2D>("3");
             chiffre = new WaitTime(chiffre3Sprite, screenBound);
 
+            balleAnim = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 - (balleSprite.Width), screenBound.Height - 150), new Vector2(r.Next(1,10), r.Next(-10,-1)), true);
+            balleAnim2 = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 - 3*(balleSprite.Width), screenBound.Height - 150), new Vector2(r.Next(1,10), r.Next(-10,-1)), true);
             lives = 3;
             Texture2D heartSprite = Content.Load<Texture2D>("heart");
             for (int i = 0; i < lives * (heartSprite.Width + 5); i += heartSprite.Width + 5)
@@ -190,7 +195,7 @@ namespace Breakout
             if (gameState == GameState.StartMenu)
             {
 
-                UpdateStartMenu(keyboardState, mouseState);
+                UpdateStartMenu(keyboardState, mouseState, gameTime);
             }
 
             if (gameState == GameState.Loading)
@@ -262,7 +267,7 @@ namespace Breakout
                     LoadContent();
                 }
                 Texture2D balleSprite = Content.Load<Texture2D>("balle");
-                balle = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 - 10, screenBound.Height - 70));
+                balle = new Balle(balleSprite, screenBound, new Vector2(screenBound.Width / 2 - 10, screenBound.Height - 70), new Vector2(0,1) , false);
                 palette.returnToStart();
                 balle.setEnable(false);
 
@@ -273,6 +278,7 @@ namespace Breakout
 
             if (state.IsKeyDown(Keys.Enter))
             {
+                pressed = true;
                 gameState = GameState.Paused;
             }
 
@@ -360,7 +366,7 @@ namespace Breakout
             }
         }
 
-        private void UpdateStartMenu(KeyboardState kState, MouseState mState)
+        private void UpdateStartMenu(KeyboardState kState, MouseState mState, GameTime gameTime)
         {
             if (MediaPlayer.State == MediaState.Stopped)
             {
@@ -371,12 +377,27 @@ namespace Breakout
             if (kState.IsKeyDown(Keys.Enter))
             {
                 MediaPlayer.Stop();
+                pressed = true;
                 gameState = GameState.Loading;
             }
 
             boutonExit.Update(kState, mState);
             boutonStart.Update(kState, mState);
 
+            //Animated ball in background
+            if(balleAnim.getEnable() == false)
+                balleAnim.setEnable(true);
+            boutonStart.checkBallCollision(balleAnim);
+            boutonExit.checkBallCollision(balleAnim);
+            balleAnim.checkBallCollision(balleAnim2.getLocation());
+            balleAnim2.checkBallCollision(balleAnim.getLocation());
+            soundEngineInstance = balleMur.CreateInstance();
+            balleAnim.Update(kState, gameTime, soundEngineInstance);
+            if (balleAnim2.getEnable() == false)
+                balleAnim2.setEnable(true);
+            boutonExit.checkBallCollision(balleAnim2);
+            boutonStart.checkBallCollision(balleAnim2);
+            balleAnim2.Update(kState, gameTime, soundEngineInstance);
         }
 
         /// <summary>
@@ -396,8 +417,11 @@ namespace Breakout
                  screenBound.Height), null,
                  Color.White, 0, Vector2.Zero,
                  SpriteEffects.None, 0);
+                balleAnim.Draw(spriteBatch);
+                balleAnim2.Draw(spriteBatch);
                 boutonStart.Draw(spriteBatch);
                 boutonExit.Draw(spriteBatch);
+
             }
 
             if (gameState == GameState.Loading)

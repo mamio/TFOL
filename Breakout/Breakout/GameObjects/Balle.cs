@@ -19,16 +19,18 @@ namespace Breakout
         private Vector2 position;
         private bool enable;
         private bool inCollision;
+        private bool invincible;
 
-        public Balle(Texture2D sprite, Rectangle screenBound, Vector2 position)
+        public Balle(Texture2D sprite, Rectangle screenBound, Vector2 position, Vector2 directions, bool balleInvincible)
         {
             this.position = position;
             this.sprite = sprite;
             this.screenBound = screenBound;
-            direction = new Vector2(0, 1);
+            direction = Vector2.Normalize(directions);
             speed = 150;
             enable = false;
             inCollision = false;
+            invincible = balleInvincible;
         }
 
         public float getPositionY()
@@ -54,6 +56,28 @@ namespace Breakout
         public void setEnable(bool enableballe)
         {
             enable = enableballe;
+        }
+
+        public Vector2 getDirection()
+        {
+            return direction;
+        }
+
+        public void setDirection(Vector2 direction1)
+        {
+            direction = direction1;
+            direction = Vector2.Normalize(direction);
+        }
+
+        public bool setInvincible(bool invincibleBall)
+        {
+            return invincibleBall;
+        }
+
+        public Rectangle getLocation()
+        {
+            return new Rectangle((int)position.X, (int)position.Y,
+                sprite.Width, sprite.Height);
         }
 
         public void Update(KeyboardState state, GameTime gameTime, SoundEffectInstance soundEngineInstance)
@@ -91,24 +115,33 @@ namespace Breakout
                 hasCollided = true;
             }
 
+            if (position.Y + sprite.Height >= screenBound.Height && invincible == true)
+            {
+                direction.Y *= -1;
+                hasCollided = true;
+            }
+
             return hasCollided;
         }
 
         public bool checkBrickCollision(Rectangle brick)
         {
+            bool hasCollided = false;
             Rectangle ballLocation = new Rectangle((int)position.X, (int)position.Y,
                sprite.Width, sprite.Height);
 
             if (brick.Intersects(ballLocation) && !inCollision)
             {
+                inCollision = true;
                 direction.Y *= -1;
                 if (speed < maxSpeed)
                 {
                     speed += 5;
                 }
-                return true;
+                hasCollided = true;
             }
-            return false;
+            inCollision = false;
+            return hasCollided;
         }
 
         public void checkPaddleCollision(Rectangle paddle, SoundEffectInstance soundEngineInstance)
@@ -129,18 +162,68 @@ namespace Breakout
                 {
                     direction.Y *= -1;
                     position.Y = paddle.Y - sprite.Height;
-                    
-                    float paddleCenter = paddle.X + (paddle.Width/2);
-                    float ballCenter = position.X + sprite.Width/2;
+
+                    float paddleCenter = paddle.X + (paddle.Width / 2);
+                    float ballCenter = position.X + sprite.Width / 2;
                     direction.X = (ballCenter - paddleCenter) / (paddle.Width / 2);
                     direction = Vector2.Normalize(direction);
                 }
 
             }
-            else if(!paddle.Intersects(ballLocation))
+            else if (!paddle.Intersects(ballLocation))
                 inCollision = false;
         }
-        
+
+        public void checkBallCollision(Rectangle ball2)
+        {
+            bool inCollision = false;
+            Rectangle ballUp = new Rectangle((int)position.X, (int)position.Y,
+                sprite.Width, 0);
+            Rectangle ballDown = new Rectangle((int)position.X, (int)position.Y + sprite.Height,
+                sprite.Width, 0);
+            Rectangle ballLeft = new Rectangle((int)position.X, (int)position.Y,
+                0, sprite.Height);
+            Rectangle ballRight = new Rectangle((int)position.X + sprite.Width, (int)position.Y,
+                0, sprite.Height);
+            if (ball2.Intersects(ballUp) && !inCollision)
+            {
+                if (direction.Y > 0)
+                    direction.Y *= -1;
+                else
+                    direction.X *= -1;
+                System.Diagnostics.Debug.Print("up" + direction.X + ", " + direction.Y);
+                inCollision = true;
+            }
+            else if (ball2.Intersects(ballDown) && !inCollision)
+            {
+                if (direction.Y < 0)
+                    direction.Y *= -1;
+                else
+                    direction.X *= -1;
+                System.Diagnostics.Debug.Print("down" + direction.X + ", " + direction.Y);
+                inCollision = true;
+            }
+            else if (ball2.Intersects(ballLeft) && !inCollision)
+            {
+                if (direction.X > 0)
+                    direction.X *= -1;
+                else
+                    direction.Y *= -1;
+                System.Diagnostics.Debug.Print("left" + direction.X + ", " + direction.Y);
+                inCollision = true;
+            }
+            else if (ball2.Intersects(ballRight) && !inCollision)
+            {
+                if (direction.X < 0)
+                    direction.X *= -1;
+                else
+                    direction.Y *= -1;
+                System.Diagnostics.Debug.Print("right" + direction.X + ", " + direction.Y);
+                inCollision = true;
+            }
+            inCollision = false;
+            direction = Vector2.Normalize(direction);
+        }
 
         public void Draw(SpriteBatch spriteBatch)
         {
